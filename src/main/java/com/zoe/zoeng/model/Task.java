@@ -1,39 +1,49 @@
 package com.zoe.zoeng.model;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class Task {
     private int id;
     private String title;
     private String description;
-    private LocalDate dueDate;
+    private LocalDateTime start;
+    private LocalDateTime end;
     private boolean completed;
 
     public Task() {
     }
 
-    public Task(int id, String title, String description, LocalDate dueDate, boolean completed) {
+    public Task(int id, String title, String description, LocalDateTime start, LocalDateTime end, boolean completed) {
         this.id = id;
         this.title = title;
         this.description = description;
-        this.dueDate = dueDate;
+        this.start = start;
+        this.end = end;
         this.completed = completed;
     }
 
-    public int getId() {
-        return id;
+    public boolean isCompleted() {
+        return completed;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setCompleted(boolean completed) {
+        this.completed = completed;
     }
 
-    public String getTitle() {
-        return title;
+    public LocalDateTime getEnd() {
+        return end;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setEnd(LocalDateTime end) {
+        this.end = end;
+    }
+
+    public LocalDateTime getStart() {
+        return start;
+    }
+
+    public void setStart(LocalDateTime start) {
+        this.start = start;
     }
 
     public String getDescription() {
@@ -44,19 +54,19 @@ public class Task {
         this.description = description;
     }
 
-    public LocalDate getDueDate() {
-        return dueDate;
+    public String getTitle() {
+        return title;
     }
 
-    public void setDueDate(LocalDate dueDate) {
-        this.dueDate = dueDate;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
-    public boolean isCompleted() {
-        return completed;
+    public int getId() {
+        return id;
     }
 
-    public void setCompleted(boolean completed) {
-        this.completed = completed;
+    public void setId(int id) {
+        this.id = id;
     }
 }
