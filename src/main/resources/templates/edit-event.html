@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html xmlns:th="http:thymeleaf.org">
+<head>
+    <title>Edit Event</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <style>
+        .form-container {
+            max-width: 500px;
+            margin: 40px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-container label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .form-container input[type="text"],
+        .form-container input[type="datetime-local"],
+        .form-container input[type="date"],
+        .form-container textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .error {
+            color: #dc3545;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body onload="initializeForm()">
+
+<div class="form-container">
+    <h2>Edit Event</h2>
+
+    <form th:action="@{/updateEvent}" th:object="${event}" method="post">
+
+        <input type="hidden" th:field="*{id}" />
+
+        <div class="form-group">
+            <label>Event Title</label>
+            <input type="text" th:field="*{title}" />
+            <p class="error" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></p>
+        </div>
+
+        <div class="form-group">
+            <label>Description</label>
+            <textarea th:field="*{description}" rows="3"></textarea>
+        </div>
+
+        <div class="checkbox-group">
+            <input type="checkbox" id="allDayCheckbox" th:field="*{allDay}" onchange="toggleTimeInputs()" />
+            <label for="allDayCheckbox">This is an all-day event</label>
+        </div>
+
+        <div class="form-group" id="wholeDaySection" style="display: none;">
+            <label>Event Date</label>
+            <input type="date" id="allDayDate" onchange="syncAllDayTimes()" />
+        </div>
+
+        <div id="customTimeSection">
+            <div class="form-group">
+                <label>Start Date & Time</label>
+                <input type="datetime-local" th:field="*{start}" id="startTimeInput" />
+                <p class="error" th:if="${#fields.hasErrors('start')}" th:errors="*{start}"></p>
+            </div>
+
+            <div class="form-group">
+                <label>End Date & Time</label>
+                <input type="datetime-local" th:field="*{finish}" id="finishTimeInput" />
+                <p class="error" th:if="${#fields.hasErrors('finish')}" th:errors="*{finish}"></p>
+            </div>
+        </div>
+
+        <button type="submit" class="btn">Update Event</button>
+        <a th:href="@{/}" style="margin-left: 10px; color: #6c757d; text-decoration: none;">Cancel</a>
+    </form>
+</div>
+
+<script>
+    // Runs when editing page loads to check if the saved event was set to all-day
+    function initializeForm() {
+        const isAllDay = document.getElementById('allDayCheckbox').checked;
+        if (isAllDay) {
+            const startVal = document.getElementById('startTimeInput').value;
+            if (startVal) {
+                // Extract just the date segment (YYYY-MM-DD) from the LocalDateTime text string
+                document.getElementById('allDayDate').value = startVal.split('T')[0];
+            }
+            toggleTimeInputs();
+        }
+    }
+
+    function toggleTimeInputs() {
+        const isAllDay = document.getElementById('allDayCheckbox').checked;
+        const customTimeSection = document.getElementById('customTimeSection');
+        const wholeDaySection = document.getElementById('wholeDaySection');
+
+        if (isAllDay) {
+            customTimeSection.style.display = 'none';
+            wholeDaySection.style.display = 'block';
+            syncAllDayTimes();
+        } else {
+            customTimeSection.style.display = 'block';
+            wholeDaySection.style.display = 'none';
+        }
+    }
+
+    function syncAllDayTimes() {
+        const datePicked = document.getElementById('allDayDate').value;
+        if (!datePicked) return;
+        document.getElementById('startTimeInput').value = datePicked + 'T00:00';
+        document.getElementById('finishTimeInput').value = datePicked + 'T23:59';
+    }
+</script>
+
+</body>
+</html>

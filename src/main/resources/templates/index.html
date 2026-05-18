@@ -1,11 +1,69 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Human Anatomy</title>
+    <title>Your Calendar</title>
+    <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f4f7f6; margin: 20px; }
+        .calendar-container { max-width: 900px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.05); }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .btn { padding: 8px 15px; background-color: #007bff; color: white; text-decoration: none; border-radius: 4px; font-weight: bold; }
+        .btn:hover { background-color: #0056b3; }
+        .btn-add { background-color: #28a745; }
+        .btn-add:hover { background-color: #218838; }
+        .btn-danger { background-color: #dc3545; font-size: 10px; padding: 2px 5px; margin-left: 5px; border-radius: 3px; color: white;}
+        .btn-edit { background-color: #ffc107; color: black; font-size: 10px; padding: 2px 5px; border-radius: 3px; text-decoration: none; }
+
+        /* The grid activation rule */
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
+
+        .weekday { text-align: center; font-weight: bold; background-color: #e9ecef; padding: 10px 0; border-radius: 4px; }
+        .day-cell { min-height: 100px; background-color: #fff; border: 1px solid #dee2e6; border-radius: 4px; padding: 5px; display: flex; flex-direction: column; justify-content: space-between; }
+        .blank-cell { min-height: 100px; background-color: transparent; border: none; }
+        .day-number { font-weight: bold; color: #495057; }
+        .events-container { margin-top: 5px; flex-grow: 1; }
+        .event-item { background-color: #e2f0fe; border-left: 4px solid #007bff; color: #004085; padding: 3px; font-size: 11px; margin-bottom: 4px; border-radius: 2px; display: flex; justify-content: space-between; align-items: center; }
+    </style>
 </head>
 <body>
-    <h1>Welcome to your Human Anatomy guide</h1>
-    <p>Your first page is now connected to your controller.</p>
+
+<div class="calendar-container">
+    <div class="header">
+        <div>
+            <a th:href="@{/(year=${currentMonth == 1 ? currentYear - 1 : currentYear}, month=${currentMonth == 1 ? 12 : currentMonth - 1})}" class="btn">&laquo; Prev</a>
+            <a th:href="@{/(year=${currentMonth == 12 ? currentYear + 1 : currentYear}, month=${currentMonth == 12 ? 1 : currentMonth + 1})}" class="btn">Next &raquo;</a>
+        </div>
+
+        <h2 th:text="${currentMonthName} + ' ' + ${currentYear}">MAY 2026</h2>
+
+        <a th:href="@{/addEvent}" class="btn btn-add">+ Add Event</a>
+    </div>
+
+    <div class="calendar-grid">
+        <div class="weekday">Sun</div><div class="weekday">Mon</div><div class="weekday">Tue</div>
+        <div class="weekday">Wed</div><div class="weekday">Thu</div><div class="weekday">Fri</div>
+        <div class="weekday">Sat</div>
+
+        <div th:each="blank : ${leadingBlanks}" class="blank-cell"></div>
+
+        <div th:each="day : ${days}" class="day-cell">
+            <span class="day-number" th:text="${day}">1</span>
+
+            <div class="events-container">
+                <div th:each="event : ${events}"
+                     th:if="${event.start.dayOfMonth == day && event.start.monthValue == currentMonth && event.start.year == currentYear}"
+                     class="event-item">
+
+                    <span th:text="${event.title}">Meeting</span>
+
+                    <div>
+                        <a th:href="@{/editEvent/{id}(id=${event.id})}" class="btn-edit">✏️</a>
+                        <a th:href="@{/deleteEvent/{id}(id=${event.id})}" class="btn-danger" onclick="return confirm('Delete this event?');">❌</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>

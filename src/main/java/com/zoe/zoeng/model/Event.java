@@ -1,26 +1,48 @@
 package com.zoe.zoeng.model;
 
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
-public class Task {
+@Entity
+@Table(name = "events")
+public class Event {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
+    @NotBlank(message = "Title cannot be blank")
     private String title;
+
     private String description;
+
+    @NotNull(message = "Start time is required")
     private LocalDateTime start;
-    private LocalDateTime end;
+
+    @NotNull(message = "End time is required")
+    private LocalDateTime finish;
+
     private boolean completed;
 
-    public Task() {
+    private boolean allDay;
+
+    public Event() {
     }
 
-    public Task(int id, String title, String description, LocalDateTime start, LocalDateTime end, boolean completed) {
+    public Event(int id, String title, String description, LocalDateTime start, LocalDateTime finish, boolean completed, boolean allDay) {
         this.id = id;
         this.title = title;
         this.description = description;
         this.start = start;
-        this.end = end;
+        this.finish = finish;
         this.completed = completed;
+        this.allDay = allDay;
     }
+
+    public boolean isAllDay() {return allDay; }
+
+    public void setAllDay(boolean allDay) {this.allDay = allDay; }
 
     public boolean isCompleted() {
         return completed;
@@ -30,12 +52,12 @@ public class Task {
         this.completed = completed;
     }
 
-    public LocalDateTime getEnd() {
-        return end;
+    public LocalDateTime getFinish() {
+        return finish;
     }
 
-    public void setEnd(LocalDateTime end) {
-        this.end = end;
+    public void setFinish(LocalDateTime finish) {
+        this.finish = finish;
     }
 
     public LocalDateTime getStart() {
